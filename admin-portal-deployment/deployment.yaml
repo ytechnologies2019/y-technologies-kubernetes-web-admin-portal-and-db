@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: admin-portal
+  name: admin-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-portal
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: admin-portal
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+      #Admin_ConfigMap
+        volumeMounts:
+        - name: admin-config
+          mountPath: "/etc/nginx/conf.d/"
+          readOnly: true
+      #Admin Website
+        - mountPath: /etc/web/admin/
+          name: admin-web-volume
+      #Admin_ConfigMap
+      volumes:
+      - name: admin-config
+        configMap:
+          name: portal-default
+      #Admin Website
+      - name: admin-web-volume
+        hostPath:
+          # directory location on host
+          path: /yourmountpath/
+          # this field is optional
+          type: Directory
+      
+status: {}
